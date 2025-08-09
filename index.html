@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ASIET Canteen Menu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #current-order {
+      background: #f1f8e9;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(46,125,50,0.1);
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    #order-details ul {
+      list-style: none;
+      padding: 0;
+    }
+    #order-details li {
+      background: #fff;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .order-btn, .edit-btn, .remove-btn, .print-btn {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .edit-btn { background: #ffeb3b; }
+    .remove-btn { background: #f44336; color: #fff; }
+    .print-btn { background: #4caf50; color: #fff; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to ASIET Canteen</h1>
+    <div id="date"></div>
+  </header>
+
+  <div class="veg-menu-heading-container">
+    <h2 class="menu-heading">Vegetarian Menu</h2>
+  </div>
+
+  <main>
+    <section>
+      <div id="veg-menu">
+        <!-- Menu items will be loaded here -->
+      </div>
+    </section>
+
+    <section id="current-order">
+      <h2>Your Current Order</h2>
+      <div id="order-details"></div>
+      <button onclick="clearOrder()" class="order-btn">Clear Order</button>
+      <button onclick="printOrder()" class="print-btn">Print Receipt</button>
+      <a href="summary.html" class="order-btn" style="display:inline-block; margin-top:1rem;">
+  View Full Order Summary
+</a>
+
+
+    </section>
+  </main>
+
+  <script>
+    fetch('menu.json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('date').textContent = `Menu for ${data.date}`;
+        const vegMenu = document.getElementById('veg-menu');
+
+        data.veg.forEach((item, idx) => {
+          vegMenu.insertAdjacentHTML('beforeend', `
+            <div class="card">
+              <img src="${item.photo}" alt="${item.item}" loading="lazy">
+              <div class="card-details">
+                <h3>${item.item}</h3>
+                <p class="price">${item.price}</p>
+                <p class="calories">${item.calories}</p>
+                <label>
+                  Qty:
+                  <input type="number" min="1" max="10" value="1" id="qty${idx}">
+                </label>
+                <button class="order-btn" onclick="placeOrder('${item.item}', document.getElementById('qty${idx}').value, '${item.price}')">Place Order</button>
+              </div>
+            </div>
+          `);
+        });
+
+        showOrderDetails();
+      });
+
+    function placeOrder(item, qty, price) {
+      qty = parseInt(qty);
+      if (isNaN(qty) || qty < 1 || qty > 10) {
+        alert('Please enter a valid quantity (1–10).');
+        return;
+      }
+
+      const numericPrice = parseInt(price.replace(/[^\d]/g, ''));
+      const total = numericPrice * qty;
+
+      const orders = JSON.parse(localStorage.getItem('order') || '[]');
+      orders.push({
+        name: item,
+        qty: qty,
+        price: `₹${numericPrice}`,
+        total: `₹${total}`
+      });
+      localStorage.setItem('order', JSON.stringify(orders));
+      alert(`Order placed for ${qty} x ${item} (Total: ₹${total})`);
+      showOrderDetails();
+    }
+
+    function showOrderDetails() {
+      const orderDetails = document.getElementById('order-details');
+      const orders = JSON.parse(localStorage.getItem('order') || '[]');
+
+      if (orders.length === 0) {
+        orderDetails.innerHTML = '<p>No items ordered yet.</p>';
+        return;
+      }
+
+      let totalAmount = 0;
+      const list = document.createElement('ul');
+
+      orders.forEach((order, index) => {
+        const itemTotal = parseInt(order.total.replace(/[^\d]/g, ''));
+        totalAmount += itemTotal;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${order.qty} x ${order.name}</strong><br>
+          Price: ${order.price} each<br>
+          Total: ${order.total}<br>
+          <button class="edit-btn" onclick="editOrder(${index})">Edit</button>
+          <button class="remove-btn" onclick="removeOrder(${index})">Remove</button>
+        `;
+        list.appendChild(li);
+      });
+
+      orderDetails.innerHTML = '';
+      orderDetails.appendChild(list);
+
+      const totalDisplay = document.createElement('p');
+      totalDisplay.style.fontWeight = 'bold';
+      totalDisplay.style.marginTop = '1rem';
+      totalDisplay.textContent = `Grand Total: ₹${totalAmount}`;
+      orderDetails.appendChild(totalDisplay);
+    }
+
+    function clearOrder() {
+      localStorage.removeItem('order');
+      showOrderDetails();
+    }
+
+    function removeOrder(index) {
+      const orders = JSON.parse(localStorage.getItem('order') || '[]');
+      orders.splice(index, 1);
+      localStorage.setItem('order', JSON.stringify(orders));
+      showOrderDetails();
+    }
+
+    function editOrder(index) {
+      const orders = JSON.parse(localStorage.getItem('order') || '[]');
+      const newQty = prompt(`Edit quantity for ${orders[index].name}:`, orders[index].qty);
+      const qty = parseInt(newQty);
+      if (isNaN(qty) || qty < 1 || qty > 10) {
+        alert('Invalid quantity.');
+        return;
+      }
+
+      const price = parseInt(orders[index].price.replace(/[^\d]/g, ''));
+      orders[index].qty = qty;
+      orders[index].total = `₹${price * qty}`;
+      localStorage.setItem('order', JSON.stringify(orders));
+      showOrderDetails();
+    }
+
+    function printOrder() {
+      window.print();
+    }
+  </script>
+</body>
+</html>
+

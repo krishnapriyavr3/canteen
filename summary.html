@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Summary - ASIET Canteen</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #2e7d32;
+      color: #fff;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    #order-summary {
+      background: #ffffff;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    #order-summary ul {
+      list-style: none;
+      padding: 0;
+    }
+    #order-summary li {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #f1f8e9;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .btn-group {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .order-btn, .print-btn, .confirm-btn {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .order-btn {
+      background: #388e3c;
+      color: #fff;
+    }
+    .print-btn {
+      background: #4caf50;
+      color: #fff;
+    }
+    .confirm-btn {
+      background: #ff9800;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Order Summary</h1>
+  </header>
+
+  <main>
+   <section id="receipt">
+  <h2>ASIET Canteen Receipt</h2>
+  <p><strong>Date:</strong> <span id="print-date"></span></p>
+  <div id="order-summary">
+    <!-- Order details will be injected here -->
+  </div>
+</section>
+
+
+
+    <div class="btn-group">
+      <a href="index.html" class="order-btn">Back to Menu</a>
+      <button onclick="printOrder()" class="print-btn">Print Receipt</button>
+      <button onclick="confirmOrder()" class="confirm-btn">Confirm Order</button>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const summarySection = document.getElementById('order-summary');
+      const orders = JSON.parse(localStorage.getItem('order') || '[]');
+
+      if (orders.length === 0) {
+        summarySection.innerHTML = '<p>No items ordered yet.</p>';
+        return;
+      }
+
+      let totalAmount = 0;
+      const list = document.createElement('ul');
+
+      orders.forEach(order => {
+        const itemTotal = parseInt(order.total.replace(/[^\d]/g, ''));
+        totalAmount += itemTotal;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${order.qty} x ${order.name}</strong><br>
+          Price: ${order.price} each<br>
+          Total: ${order.total}
+        `;
+        list.appendChild(li);
+      });
+
+      summarySection.innerHTML = '';
+      summarySection.appendChild(list);
+
+      const totalDisplay = document.createElement('p');
+      totalDisplay.style.fontWeight = 'bold';
+      totalDisplay.style.marginTop = '1rem';
+      totalDisplay.textContent = `Grand Total: ₹${totalAmount}`;
+      summarySection.appendChild(totalDisplay);
+    });
+
+   function printOrder() {
+  const printContents = document.getElementById('receipt').innerHTML;
+  const originalContents = document.body.innerHTML;
+
+  document.body.innerHTML = printContents;
+  window.print();
+  document.body.innerHTML = originalContents;
+  location.reload(); // restore event listeners
+}
+
+
+    function confirmOrder() {
+      alert('Your order has been confirmed! Thank you.');
+      localStorage.removeItem('order');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
+
