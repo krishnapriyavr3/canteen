@@ -1,112 +1,174 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
+/* === Fonts & Base Styles === */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
     margin: 0;
     padding: 0;
-}
-header {
-    background: #2e7d32;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-}
-main {
-    display: flex;
-    justify-content: space-around;
-    margin: 2rem;
-    flex-wrap: wrap;
-}
-section {
-    background: #2fbb00;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1rem;
-    /* Remove or comment out the width property */
-    /* width: 350px; */
-    margin: 1rem;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #e6f5ec);
+    color: #333;
+    min-height: 100vh;
+}
+
+/* === Header === */
+header {
+    background: linear-gradient(90deg, #2e7d32, #4caf50);
+    color: #fff;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+header #date {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* === Menu Heading === */
 .veg-menu-heading-container {
     width: 100%;
-    background: #013a06;
-    border-radius: 0 0 0 0;
-    margin: 0 auto 0.5rem auto;
+    background: #2e7d32;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(46,125,50,0.08);
-    max-width: 1800px;
+    padding: 1rem 0;
 }
 
 .menu-heading {
     color: #fff;
-    padding: 1rem 0;
-    margin: 0;
-    font-size: 2rem;
-    letter-spacing: 1px;
+    font-size: 1.8rem;
+    font-weight: 600;
 }
 
+/* === Menu Grid === */
 #veg-menu {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-    align-items: stretch;
-    background: #d0f5df; /* Changed to a lighter green */
-    border-radius: 0 0 12px 12px;
-    padding-bottom: 1.5rem;
-    padding-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
 }
 
 .card {
-    flex: 0 1 260px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    border-bottom: none;
-    padding: 1.5rem 1rem;
-    background: #fafafa;
+    background: #fff;
     border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(46,125,50,0.04);
-    transition: box-shadow 0.2s, transform 0.2s;
-    /* Add margin for horizontal spacing if needed */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
 .card img {
-    width: 250px;
-    height: 300px;
+    width: 100%;
+    height: 200px;
     object-fit: cover;
-    border-radius: 8px;
-    margin-right: 0;
-    margin-bottom: 1rem;
 }
+
 .card-details {
-    flex: 1;
+    padding: 1rem;
 }
+
 .card-details h3 {
-    margin: 0 0 0.5rem 0;
+    margin-bottom: 0.3rem;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
-.card-details p {
-    margin: 0.2rem 0;
-    color: #555;
-}
+
 .price {
     font-weight: bold;
     color: #2e7d32;
 }
+
 .calories {
-    font-size: 0.9em;
+    font-size: 0.85rem;
     color: #888;
+    margin-bottom: 0.5rem;
 }
-.order-btn {
+
+/* === Buttons === */
+button, .order-btn {
     display: inline-block;
-    padding: 0.75rem 2rem;
-    background: #2e7d32;
+    padding: 0.6rem 1.4rem;
+    background: linear-gradient(90deg, #74a50c, #0a5910);
     color: #fff;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-    transition: background 0.2s;
+    border: none;
+    border-radius: 30px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
-.order-btn:hover {
-    background: #388e3c;
+
+button:hover, .order-btn:hover {
+    background: linear-gradient(90deg, #7d8e38, #54c11a);
+    transform: translateY(-2px);
+}
+
+/* === Cart Badge === */
+#cart-badge {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: #ff7043;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: background 0.3s ease;
+}
+
+#cart-badge:hover {
+    background: #f4511e;
+}
+
+/* === Current Order Section === */
+#current-order {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+/* === Cart & Summary Tables === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.6rem;
+    }
+    .menu-heading {
+        font-size: 1.5rem;
+    }
+    #cart-badge {
+        font-size: 0.85rem;
+    }
 }
